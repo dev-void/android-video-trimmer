@@ -1,6 +1,7 @@
 package com.gowtham.library.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -99,6 +100,12 @@ public class TrimVideo {
             launcher.launch(getIntent(activity));
         }
 
+        public void start(Context context,
+                          ActivityResultLauncher<Intent> launcher) {
+            validate();
+            launcher.launch(getIntent(context));
+        }
+
         public void start(Fragment fragment,ActivityResultLauncher<Intent> launcher) {
             validate();
             launcher.launch(getIntent(fragment.getActivity()));
@@ -134,6 +141,16 @@ public class TrimVideo {
             Bundle bundle=new Bundle();
             bundle.putString(TRIM_VIDEO_URI, videoUri);
             bundle.putString(TRIM_VIDEO_OPTION, gson.toJson(options));
+            intent.putExtras(bundle);
+            return intent;
+        }
+
+        private Intent getIntent(Context context) {
+            Intent intent = new Intent(context, ActVideoTrimmer.class);
+            Gson gson = new Gson();
+            Bundle bundle = new Bundle();
+            bundle.putString("trim_video_uri", this.videoUri);
+            bundle.putString("trim_video_option", gson.toJson(this.options));
             intent.putExtras(bundle);
             return intent;
         }
