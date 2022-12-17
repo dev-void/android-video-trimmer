@@ -287,7 +287,8 @@ public class ActVideoTrimmer extends LocalizationActivity {
             MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(mUri));
             videoPlayer.addMediaSource(mediaSource);
             videoPlayer.prepare();
-            videoPlayer.setPlayWhenReady(false);
+            videoPlayer.pause();
+            imagePlayPause.setVisibility(View.VISIBLE);
             videoPlayer.addListener(new Player.Listener() {
                 @Override
                 public void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
@@ -305,7 +306,6 @@ public class ActVideoTrimmer extends LocalizationActivity {
                             break;
                         case Player.STATE_READY:
                             isVideoEnded = false;
-                            imagePlayPause.setVisibility(View.GONE);
                             startProgress();
                             LogMessage.v("onPlayerStateChanged: Ready to play.");
                             break;
