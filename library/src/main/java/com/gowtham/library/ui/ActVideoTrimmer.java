@@ -150,7 +150,7 @@ public class ActVideoTrimmer extends LocalizationActivity {
 
     @Override
     protected void attachBaseContext(@NotNull Context base) {
-        super.attachBaseContext(LocaleHelper.onAttach(base, "en"));
+        super.attachBaseContext(LocaleHelper.onAttach(base, "ar"));
     }
 
     @Override
@@ -258,7 +258,7 @@ public class ActVideoTrimmer extends LocalizationActivity {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
-        setLanguage(new Locale(local != null ? local : "en"));
+        setLanguage(new Locale(local != null ? local : "ar"));
     }
 
     private void onVideoClicked() {
