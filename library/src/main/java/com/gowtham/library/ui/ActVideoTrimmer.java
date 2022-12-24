@@ -1,6 +1,7 @@
 package com.gowtham.library.ui;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -546,6 +547,7 @@ public class ActVideoTrimmer extends LocalizationActivity {
         return String.valueOf(newFile);
     }
 
+    @SuppressLint("DefaultLocale")
     private String[] getCompressionCmd() {
         MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
         metaRetriever.setDataSource(String.valueOf(uri));
@@ -563,13 +565,13 @@ public class ActVideoTrimmer extends LocalizationActivity {
         if (compressOption.getWidth() != 0 || compressOption.getHeight() != 0
                 || !compressOption.getBitRate().equals("0k")) {
             return new String[]{"-ss", TrimmerUtils.formatCSeconds(lastMinValue),
-                    "-i", String.valueOf(uri), "-s", compressOption.getWidth() + "x" +
-                    compressOption.getHeight(),
-                    "-r", String.valueOf(compressOption.getFrameRate()),
-                    "-vcodec", "mpeg4", "-b:v",
-                    compressOption.getBitRate(), "-b:a", "48000", "-ac", "2", "-ar",
-                    "22050", "-t",
-                    TrimmerUtils.formatCSeconds(lastMaxValue - lastMinValue), outputPath};
+                    "-i", String.valueOf(uri),
+                    "-vf", String.format("scale=trunc(%1$d/2)*2:trunc(%2$d/2)*2,setsar=1:1", compressOption.getWidth(), compressOption.getHeight()),
+                    "-c:v", "libx264",
+                    "-c:a", "aac",
+                    "-b:a", "128k",
+                    "-t", TrimmerUtils.formatCSeconds(lastMaxValue - lastMinValue),
+                    outputPath};
         }
         //Dividing high resolution video by 2(ex: taken with camera)
         else if (w >= 800) {
