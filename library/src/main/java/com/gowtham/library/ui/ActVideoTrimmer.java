@@ -525,17 +525,11 @@ public class ActVideoTrimmer extends LocalizationActivity {
     private String getFileName() {
         String path = getExternalFilesDir("TrimmedVideo").getPath();
         Calendar calender = Calendar.getInstance();
-        String fileDateTime = calender.get(Calendar.YEAR) + "_" +
-                calender.get(Calendar.MONTH) + "_" +
-                calender.get(Calendar.DAY_OF_MONTH) + "_" +
-                calender.get(Calendar.HOUR_OF_DAY) + "_" +
-                calender.get(Calendar.MINUTE) + "_" +
-                calender.get(Calendar.SECOND);
         String fName = "trimmed_video_";
         if (fileName != null && !fileName.isEmpty())
             fName = fileName;
         File newFile = new File(path + File.separator +
-                (fName) + fileDateTime + "." + TrimmerUtils.getFileExtension(this, uri));
+                (fName) + "." + TrimmerUtils.getFileExtension(this, uri));
         return String.valueOf(newFile);
     }
 
