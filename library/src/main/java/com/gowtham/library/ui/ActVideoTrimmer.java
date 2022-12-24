@@ -558,7 +558,7 @@ public class ActVideoTrimmer extends LocalizationActivity {
                 || !compressOption.getBitRate().equals("0k")) {
             return new String[]{"-ss", TrimmerUtils.formatCSeconds(lastMinValue),
                     "-i", String.valueOf(uri),
-                    "-vf", String.format("scale=trunc(%1$d/2)*2:trunc(%2$d/2)*2,setsar=1:1", compressOption.getWidth(), compressOption.getHeight()),
+                    "-vf", "scale=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2,setsar=1:1",
                     "-c:v", "libx264",
                     "-c:a", "aac",
                     "-b:a", "128k",
