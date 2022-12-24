@@ -127,7 +127,6 @@ public class ActVideoTrimmer extends LocalizationActivity {
     };
     private CompressOption compressOption;
     private String outputPath;
-    private String local;
     private int trimType;
     private long fixedGap, minGap, minFromGap, maxToGap;
     private boolean hidePlayerSeek, isAccurateCut, showFileLocationAlert;
@@ -238,7 +237,6 @@ public class ActVideoTrimmer extends LocalizationActivity {
             fileName = trimVideoOptions.fileName;
             hidePlayerSeek = trimVideoOptions.hideSeekBar;
             isAccurateCut = trimVideoOptions.accurateCut;
-            local = trimVideoOptions.local;
             compressOption = trimVideoOptions.compressOption;
             showFileLocationAlert = trimVideoOptions.showFileLocationAlert;
             fixedGap = trimVideoOptions.fixedDuration;

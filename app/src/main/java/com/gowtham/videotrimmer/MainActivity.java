@@ -113,18 +113,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             TrimVideo.activity(data)
                     .setTrimType(TrimType.FIXED_DURATION)
                     .setFixedDuration(getEdtValueLong(edtFixedGap))
-                    .setLocal("ar")
                     .start(this, videoTrimResultLauncher);
         } else if (trimType == 2) {
             TrimVideo.activity(data)
                     .setTrimType(TrimType.MIN_DURATION)
-                    .setLocal("ar")
                     .setMinDuration(getEdtValueLong(edtMinGap))
                     .start(this, videoTrimResultLauncher);
         } else {
             TrimVideo.activity(data)
                     .setTrimType(TrimType.MIN_MAX_DURATION)
-                    .setLocal("ar")
                     .setMinToMax(getEdtValueLong(edtMinFrom), getEdtValueLong(edtMAxTo))
                     .start(this, videoTrimResultLauncher);
         }
