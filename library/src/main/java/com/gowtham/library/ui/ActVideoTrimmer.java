@@ -500,7 +500,7 @@ public class ActVideoTrimmer extends LocalizationActivity {
             outputPath = getFileName();
             File outFile = new File(outputPath);
             try {
-                outFile.deleteOnExit();
+                outFile.delete();
             } catch (Exception e) {
                 //no-op
             }
