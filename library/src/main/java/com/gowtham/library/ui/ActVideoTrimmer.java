@@ -496,7 +496,13 @@ public class ActVideoTrimmer extends LocalizationActivity {
         if (isValidVideo) {
             //not exceed given maxDuration if has given
             outputPath = getFileName();
-            LogMessage.v("outputPath::" + outputPath + new File(outputPath).exists());
+            File outFile = new File(outputPath);
+            try {
+                outFile.deleteOnExit();
+            } catch (Exception e) {
+                //no-op
+            }
+            LogMessage.v("outputPath::" + outputPath + outFile.exists());
             LogMessage.v("sourcePath::" + uri);
             videoPlayer.setPlayWhenReady(false);
             showProcessingDialog();
