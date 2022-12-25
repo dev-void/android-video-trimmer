@@ -41,6 +41,7 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -48,6 +49,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.gson.Gson;
 import com.gowtham.library.R;
 import com.gowtham.library.ui.seekbar.widgets.CrystalRangeSeekbar;
@@ -74,7 +76,7 @@ public class ActVideoTrimmer extends LocalizationActivity {
 
     private static final int PER_REQ_CODE = 115;
     private StyledPlayerView playerView;
-    private ExoPlayer videoPlayer;
+    private SimpleExoPlayer videoPlayer;
 
     private ImageView imagePlayPause;
 
@@ -189,7 +191,7 @@ public class ActVideoTrimmer extends LocalizationActivity {
      **/
     private void initPlayer() {
         try {
-            videoPlayer = new ExoPlayer.Builder(this).build();
+            videoPlayer = new SimpleExoPlayer.Builder(this).build();
             playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
             playerView.setPlayer(videoPlayer);
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -276,13 +278,13 @@ public class ActVideoTrimmer extends LocalizationActivity {
 
     private void buildMediaSource(Uri mUri) {
         try {
-            DataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(this);
+            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(this);
             MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(mUri));
             videoPlayer.addMediaSource(mediaSource);
             videoPlayer.prepare();
             videoPlayer.pause();
             imagePlayPause.setVisibility(View.VISIBLE);
-            videoPlayer.addListener(new Player.Listener() {
+            videoPlayer.addListener(new Player.EventListener() {
                 @Override
                 public void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
                     imagePlayPause.setVisibility(playWhenReady ? View.GONE :
