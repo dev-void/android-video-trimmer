@@ -10,6 +10,8 @@ public class CompressOption {
 
     private int height=0;
 
+    private String encodeType = "pad";
+
     public CompressOption() {
     }
 
@@ -52,4 +54,11 @@ public class CompressOption {
         return bitRate;
     }
 
+    public String getEncodeType() {
+        return encodeType;
+    }
+
+    public void setEncodeType(String encodeType) {
+        this.encodeType = encodeType;
+    }
 }

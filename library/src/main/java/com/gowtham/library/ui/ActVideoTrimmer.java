@@ -558,14 +558,27 @@ public class ActVideoTrimmer extends LocalizationActivity {
         //Default compression option
         if (compressOption.getWidth() != 0 || compressOption.getHeight() != 0
                 || !compressOption.getBitRate().equals("0k")) {
-            return new String[]{"-ss", TrimmerUtils.formatCSeconds(lastMinValue),
-                    "-i", String.valueOf(uri),
-                    "-vf", "scale=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2,setsar=1:1",
-                    "-c:v", "libx264",
-                    "-c:a", "aac",
-                    "-b:a", "128k",
-                    "-t", TrimmerUtils.formatCSeconds(lastMaxValue - lastMinValue),
-                    outputPath};
+            if (compressOption.getEncodeType().equals("crop")) {
+                return new String[]{"-ss", TrimmerUtils.formatCSeconds(lastMinValue),
+                        "-i", String.valueOf(uri),
+                        "-vf", "scale=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2:force_original_aspect_ratio=increase,crop=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2,setsar=1:1",
+                        "-c:v", "libx264",
+                        "-crf", "20",
+                        "-c:a", "copy",
+                        "-preset", "veryfast",
+                        "-t", TrimmerUtils.formatCSeconds(lastMaxValue - lastMinValue),
+                        outputPath};
+            } else {
+                return new String[]{"-ss", TrimmerUtils.formatCSeconds(lastMinValue),
+                        "-i", String.valueOf(uri),
+                        "-vf", "scale=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2:force_original_aspect_ratio=decrease,pad=trunc(" + compressOption.getWidth() + "2)*2:trunc(" + compressOption.getHeight() + "/2)*2:-1:-1:color=black,setsar=1:1",
+                        "-c:v", "libx264",
+                        "-crf", "20",
+                        "-c:a", "copy",
+                        "-preset", "veryfast",
+                        "-t", TrimmerUtils.formatCSeconds(lastMaxValue - lastMinValue),
+                        outputPath};
+            }
         }
         //Dividing high resolution video by 2(ex: taken with camera)
         else if (w >= 800) {
