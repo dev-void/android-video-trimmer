@@ -571,7 +571,7 @@ public class ActVideoTrimmer extends LocalizationActivity {
             } else {
                 return new String[]{"-ss", TrimmerUtils.formatCSeconds(lastMinValue),
                         "-i", String.valueOf(uri),
-                        "-vf", "scale=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2:force_original_aspect_ratio=decrease,pad=trunc(" + compressOption.getWidth() + "2)*2:trunc(" + compressOption.getHeight() + "/2)*2:-1:-1:color=black,setsar=1:1",
+                        "-vf", "scale=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2:force_original_aspect_ratio=decrease,pad=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2:-1:-1:color=black,setsar=1:1",
                         "-c:v", "libx264",
                         "-crf", "20",
                         "-c:a", "copy",
