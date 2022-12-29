@@ -141,6 +141,7 @@ public class ActVideoTrimmer extends LocalizationActivity {
 
     private ProgressBar dialogProgressBar;
     private TextView dialogProgressText;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +156,7 @@ public class ActVideoTrimmer extends LocalizationActivity {
         setUpToolBar(getSupportActionBar(), trimVideoOptions.title);
         toolbar.setNavigationOnClickListener(v -> finish());
         progressView = new CustomProgressView(this);
+        handler = new Handler(getMainLooper());
     }
 
     @Override
@@ -586,12 +588,17 @@ public class ActVideoTrimmer extends LocalizationActivity {
                 Config.enableStatisticsCallback(new StatisticsCallback() {
                     @Override
                     public void apply(Statistics statistics) {
-                        if (dialogProgressBar != null && dialogProgressText != null) {
-                            float progress = Float.parseFloat(String.valueOf(statistics.getTime())) / targetVideoLength;
-                            float progressFinal = progress * 100;
-                            dialogProgressBar.setProgress((int) progressFinal);
-                            dialogProgressText.setText(String.format("%d%%", (int) progressFinal));
-                        }
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (dialogProgressBar != null && dialogProgressText != null) {
+                                    float progress = Float.parseFloat(String.valueOf(statistics.getTime())) / targetVideoLength;
+                                    float progressFinal = progress * 100;
+                                    dialogProgressBar.setProgress((int) progressFinal);
+                                    dialogProgressText.setText(String.format("%d%%", (int) progressFinal));
+                                }
+                            }
+                        });
                         Log.d(Config.TAG, String.format("frame: %d, time: %d", statistics.getVideoFrameNumber(), statistics.getTime()));
                     }
                 });
