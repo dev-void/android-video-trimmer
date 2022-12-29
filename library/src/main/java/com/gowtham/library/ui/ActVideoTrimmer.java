@@ -139,7 +139,6 @@ public class ActVideoTrimmer extends LocalizationActivity {
     private CustomProgressView progressView;
     private String fileName;
 
-    private ProgressBar dialogProgressBar;
     private TextView dialogProgressText;
     private Handler handler;
 
@@ -591,10 +590,9 @@ public class ActVideoTrimmer extends LocalizationActivity {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                if (dialogProgressBar != null && dialogProgressText != null) {
+                                if (dialogProgressText != null) {
                                     float progress = Float.parseFloat(String.valueOf(statistics.getTime())) / targetVideoLength;
                                     float progressFinal = progress * 100;
-                                    dialogProgressBar.setProgress((int) progressFinal);
                                     dialogProgressText.setText(String.format("%d%%", (int) progressFinal));
                                 }
                             }
@@ -683,7 +681,6 @@ public class ActVideoTrimmer extends LocalizationActivity {
             dialog.setCancelable(false);
             dialog.setContentView(R.layout.alert_convert);
             TextView txtCancel = dialog.findViewById(R.id.txt_cancel);
-            dialogProgressBar = dialog.findViewById(R.id.progress_trimmer);
             dialogProgressText = dialog.findViewById(R.id.textProgress);
             dialog.setCancelable(false);
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
