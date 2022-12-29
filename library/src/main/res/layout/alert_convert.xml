@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     style="@style/VView"
     android:gravity="center_horizontal"
     android:background="#303030"
@@ -10,6 +11,16 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginTop="5dp"
+        android:indeterminate="false"
+        />
+
+    <TextView
+        android:id="@+id/textProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="0%"
+        android:textColor="@color/colorWhite"
+        android:layout_marginTop="4dp"
         />
 <!--
   android:max="100"

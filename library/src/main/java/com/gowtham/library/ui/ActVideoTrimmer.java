@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +34,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.akexorcist.localizationactivity.ui.LocalizationActivity;
+import com.arthenica.mobileffmpeg.Config;
 import com.arthenica.mobileffmpeg.FFmpeg;
+import com.arthenica.mobileffmpeg.Statistics;
+import com.arthenica.mobileffmpeg.StatisticsCallback;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
@@ -134,6 +138,9 @@ public class ActVideoTrimmer extends LocalizationActivity {
     private boolean hidePlayerSeek, isAccurateCut, showFileLocationAlert;
     private CustomProgressView progressView;
     private String fileName;
+
+    private ProgressBar dialogProgressBar;
+    private TextView dialogProgressText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -543,67 +550,51 @@ public class ActVideoTrimmer extends LocalizationActivity {
 
     @SuppressLint("DefaultLocale")
     private String[] getCompressionCmd() {
-        MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
-        metaRetriever.setDataSource(String.valueOf(uri));
-        String height = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT);
-        String width = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH);
-        int w = TrimmerUtils.clearNull(width).isEmpty() ? 0 : Integer.parseInt(width);
-        int h = Integer.parseInt(height);
-        int rotation = TrimmerUtils.getVideoRotation(this, uri);
-        if (rotation == 90 || rotation == 270) {
-            int temp = w;
-            w = h;
-            h = temp;
+        if (compressOption.getWidth() == 0) {
+            throw new IllegalStateException("width should be set in the builder");
         }
-        //Default compression option
-        if (compressOption.getWidth() != 0 || compressOption.getHeight() != 0
-                || !compressOption.getBitRate().equals("0k")) {
-            if (compressOption.getEncodeType().equals("crop")) {
-                return new String[]{"-ss", TrimmerUtils.formatCSeconds(lastMinValue),
-                        "-i", String.valueOf(uri),
-                        "-vf", "scale=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2:force_original_aspect_ratio=increase,crop=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2,setsar=1:1",
-                        "-c:v", "libx264",
-                        "-crf", "20",
-                        "-c:a", "copy",
-                        "-preset", "veryfast",
-                        "-t", TrimmerUtils.formatCSeconds(lastMaxValue - lastMinValue),
-                        outputPath};
-            } else {
-                return new String[]{"-ss", TrimmerUtils.formatCSeconds(lastMinValue),
-                        "-i", String.valueOf(uri),
-                        "-vf", "scale=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2:force_original_aspect_ratio=decrease,pad=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2:-1:-1:color=black,setsar=1:1",
-                        "-c:v", "libx264",
-                        "-crf", "20",
-                        "-c:a", "copy",
-                        "-preset", "veryfast",
-                        "-t", TrimmerUtils.formatCSeconds(lastMaxValue - lastMinValue),
-                        outputPath};
-            }
+        if (compressOption.getHeight() == 0) {
+            throw new IllegalStateException("height should be set in the builder");
         }
-        //Dividing high resolution video by 2(ex: taken with camera)
-        else if (w >= 800) {
-            w = w / 2;
-            h = Integer.parseInt(height) / 2;
+        if (compressOption.getEncodeType().equals("crop")) {
             return new String[]{"-ss", TrimmerUtils.formatCSeconds(lastMinValue),
                     "-i", String.valueOf(uri),
-                    "-s", w + "x" + h, "-r", "30",
-                    "-vcodec", "mpeg4", "-b:v",
-                    "1M", "-b:a", "48000", "-ac", "2", "-ar", "22050",
-                    "-t",
-                    TrimmerUtils.formatCSeconds(lastMaxValue - lastMinValue), outputPath};
+                    "-vf", "scale=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2:force_original_aspect_ratio=increase,crop=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2,setsar=1:1",
+                    "-c:v", "libx264",
+                    "-crf", "20",
+                    "-c:a", "copy",
+                    "-preset", "veryfast",
+                    "-t", TrimmerUtils.formatCSeconds(lastMaxValue - lastMinValue),
+                    outputPath};
         } else {
             return new String[]{"-ss", TrimmerUtils.formatCSeconds(lastMinValue),
-                    "-i", String.valueOf(uri), "-s", w + "x" + h, "-r",
-                    "30", "-vcodec", "mpeg4", "-b:v",
-                    "400K", "-b:a", "48000", "-ac", "2", "-ar", "22050",
-                    "-t",
-                    TrimmerUtils.formatCSeconds(lastMaxValue - lastMinValue), outputPath};
+                    "-i", String.valueOf(uri),
+                    "-vf", "scale=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2:force_original_aspect_ratio=decrease,pad=trunc(" + compressOption.getWidth() + "/2)*2:trunc(" + compressOption.getHeight() + "/2)*2:-1:-1:color=black,setsar=1:1",
+                    "-c:v", "libx264",
+                    "-crf", "20",
+                    "-c:a", "copy",
+                    "-preset", "veryfast",
+                    "-t", TrimmerUtils.formatCSeconds(lastMaxValue - lastMinValue),
+                    outputPath};
         }
     }
 
     private void execFFmpegBinary(final String[] command, boolean retry) {
         try {
             new Thread(() -> {
+                long targetVideoLength = (lastMaxValue - lastMinValue) * 1000;
+                Config.enableStatisticsCallback(new StatisticsCallback() {
+                    @Override
+                    public void apply(Statistics statistics) {
+                        if (dialogProgressBar != null && dialogProgressText != null) {
+                            float progress = Float.parseFloat(String.valueOf(statistics.getTime())) / targetVideoLength;
+                            float progressFinal = progress * 100;
+                            dialogProgressBar.setProgress((int) progressFinal);
+                            dialogProgressText.setText(String.format("%d%%", (int) progressFinal));
+                        }
+                        Log.d(Config.TAG, String.format("frame: %d, time: %d", statistics.getVideoFrameNumber(), statistics.getTime()));
+                    }
+                });
                 int result = FFmpeg.execute(command);
                 if (result == 0) {
                     dialog.dismiss();
@@ -685,6 +676,8 @@ public class ActVideoTrimmer extends LocalizationActivity {
             dialog.setCancelable(false);
             dialog.setContentView(R.layout.alert_convert);
             TextView txtCancel = dialog.findViewById(R.id.txt_cancel);
+            dialogProgressBar = dialog.findViewById(R.id.progress_trimmer);
+            dialogProgressText = dialog.findViewById(R.id.textProgress);
             dialog.setCancelable(false);
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             txtCancel.setOnClickListener(v -> {
