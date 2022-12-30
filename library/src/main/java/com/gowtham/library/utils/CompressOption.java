@@ -6,9 +6,9 @@ public class CompressOption {
 
     private String bitRate="0k";
 
-    private int width=0;
+    private double width=0;
 
-    private int height=0;
+    private double height=0;
 
     private String encodeType = "pad";
 
@@ -30,7 +30,7 @@ public class CompressOption {
         this.bitRate = bitRate;
     }
 
-    public int getWidth() {
+    public double getWidth() {
         return width;
     }
 
@@ -38,7 +38,7 @@ public class CompressOption {
         this.width = width;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 
