@@ -15,7 +15,7 @@ public class CompressOption {
     public CompressOption() {
     }
 
-    public CompressOption(int frameRate, String bitRate, int width, int height) {
+    public CompressOption(int frameRate, String bitRate, double width, double height) {
         this.frameRate = frameRate;
         this.bitRate = bitRate;
         this.width = width;
@@ -34,7 +34,7 @@ public class CompressOption {
         return width;
     }
 
-    public void setWidth(int width) {
+    public void setWidth(double width) {
         this.width = width;
     }
 
@@ -42,7 +42,7 @@ public class CompressOption {
         return height;
     }
 
-    public void setHeight(int height) {
+    public void setHeight(double height) {
         this.height = height;
     }
 
