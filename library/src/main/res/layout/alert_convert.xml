@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         tools:text="0%"
         android:textColor="@color/colorWhite"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         />
 <!--
   android:max="100"
@@ -28,7 +28,7 @@
     <TextView
         style="@style/TxtSemiSmallStyle22"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="12dp"
         android:id="@+id/txt_process"
         android:textColor="@color/colorWhite"
         android:text="@string/txt_trimming_video"/>
