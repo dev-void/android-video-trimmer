@@ -207,12 +207,12 @@ public class TrimmerUtils {
             long seconds = secondsLeft - minutes * 60;
             String time;
             if (hours!=0){
-                time=hours+" Hrs "+(minutes!=0 ? minutes+" Mins " : "")+
-                        (seconds!=0 ? seconds+" Secs " : "");
+                time=hours+" ساعة "+(minutes!=0 ? minutes+" دقيقة " : "")+
+                        (seconds!=0 ? seconds+" ثانية " : "");
             }else if (minutes!=0)
-                time=minutes+" Mins "+(seconds!=0 ? seconds+" Secs ":"");
+                time=minutes+" دقيقة "+(seconds!=0 ? seconds+" ثانية ":"");
             else
-                time=seconds+" Secs ";
+                time=seconds+" ثانية ";
             LogMessage.v(time);
             return time;
     }
